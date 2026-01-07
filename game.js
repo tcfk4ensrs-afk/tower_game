@@ -14,7 +14,8 @@ const CONFIG = {
     blockHeight: 40,
     wallThickness: 200,
     spawnHeight: 100,
-    fixedLetters: ["H", "E", "L", "L", "O"]
+    fixedLetters: ["H", "E", "L", "L", "O"],
+    blockScale: 1.0 // Default scale
 };
 
 // Game state
@@ -112,7 +113,8 @@ function getNextBlockConfig() {
 function createLetterBody(x, y, letter, color) {
     const grid = LETTER_GRIDS[letter] || LETTER_GRIDS['A'];
     const parts = [];
-    const cellSize = 10;
+    const baseCellSize = 10;
+    const cellSize = baseCellSize * CONFIG.blockScale; // Apply scale
     const width = grid[0].length * cellSize;
     const height = grid.length * cellSize;
 
@@ -129,14 +131,14 @@ function createLetterBody(x, y, letter, color) {
         }
     }
 
-    // Chaotic Jitter Config
+    // Chaotic Jitter Config (Reverted to "Slight Bounce")
     const compoundBody = Matter.Body.create({
         parts: parts,
-        restitution: 0.4,     // "Slight" bounce (inter-block collisions will bounce)
+        restitution: 0.4,     // Slight bounce
         friction: 0.1,        // Low friction
         frictionStatic: 0.1,
         frictionAir: 0.0,
-        density: 0.01,
+        density: 0.01,        // Normal density
         label: 'block'
     });
 
@@ -211,7 +213,7 @@ function updateBoundaries() {
         label: 'ground',
         render: { fillStyle: '#333' },
         friction: 0.1,
-        restitution: 0.5      // Moderate bounce
+        restitution: 0.5
     });
 
     // 2. Short Left Slope (30 deg)
@@ -252,6 +254,21 @@ document.getElementById('rotate-btn').addEventListener('click', (e) => {
     }
 });
 
+// Difficulty Selection & Game Start
+document.querySelectorAll('.diff-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        const scale = parseFloat(e.target.dataset.scale);
+        startGame(scale);
+    });
+});
+
+function startGame(scale) {
+    CONFIG.blockScale = scale;
+    state.isPlaying = true; // Use this to gate gameplay
+    document.getElementById('title-screen').classList.add('hidden');
+    spawnSlidingBlock();
+}
+
 Events.on(engine, 'beforeUpdate', function (event) {
     if (state.isGameOver) return;
 
@@ -284,10 +301,14 @@ Events.on(engine, 'beforeUpdate', function (event) {
 Events.on(render, 'afterRender', function () {
     const context = render.context;
 
+    // render ghost block based on scaled size
     if (state.currentBlock) {
         const { x, y, angle, letter, color } = state.currentBlock;
         const grid = LETTER_GRIDS[letter] || LETTER_GRIDS['A'];
-        const cellSize = 10;
+
+        const baseCellSize = 10;
+        const cellSize = baseCellSize * CONFIG.blockScale;
+
         const w = grid[0].length * cellSize;
         const h = grid.length * cellSize;
 
@@ -299,8 +320,8 @@ Events.on(render, 'afterRender', function () {
         for (let r = 0; r < grid.length; r++) {
             for (let c = 0; c < grid[r].length; c++) {
                 if (grid[r][c] === 1) {
-                    const py = (r * cellSize) - (h / 2);
                     const px = (c * cellSize) - (w / 2);
+                    const py = (r * cellSize) - (h / 2);
                     context.fillRect(px, py, cellSize, cellSize);
                 }
             }
@@ -315,15 +336,15 @@ function triggerGameOver() {
     document.getElementById('inputOverlay').classList.remove('hidden');
 }
 
-// Start
+// Init
 updateBoundaries();
-spawnSlidingBlock();
+// spawnSlidingBlock(); // Removed auto-start
 Render.run(render);
 Runner.run(Runner.create(), engine);
 
 document.getElementById('restart-btn').addEventListener('click', () => location.reload());
 document.getElementById('submitMsgBtn').addEventListener('click', () => location.reload());
-console.log("Game initialized with WIDE BOWL and ACTIVE JITTER");
+console.log("Game initialized. Waiting for difficulty selection.");
 document.addEventListener("DOMContentLoaded", () => {
     const submitBtn = document.getElementById("submitMsgBtn");
     const input = document.getElementById("userMessage");
