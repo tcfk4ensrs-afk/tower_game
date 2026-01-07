@@ -324,7 +324,6 @@ Runner.run(Runner.create(), engine);
 document.getElementById('restart-btn').addEventListener('click', () => location.reload());
 document.getElementById('submitMsgBtn').addEventListener('click', () => location.reload());
 console.log("Game initialized with WIDE BOWL and ACTIVE JITTER");
-// --- HELLO入力チェックと正解表示処理 ---
 document.addEventListener("DOMContentLoaded", () => {
     const submitBtn = document.getElementById("submitMsgBtn");
     const input = document.getElementById("userMessage");
@@ -335,10 +334,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (value === "HELLO") {
             overlay.innerHTML = `
-                <div class="overlay-content">
+                <div class="modal">
                     <h2>🎉 正解！</h2>
                     <p>あなたの言葉が塔を再建しました！</p>
-                    <button onclick="location.reload()">もう一度プレイ</button>
+                    <button class="btn" onclick="location.reload()">もう一度プレイ</button>
                 </div>
             `;
         } else {
@@ -346,4 +345,3 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 });
-
