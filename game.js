@@ -342,27 +342,22 @@ updateBoundaries();
 Render.run(render);
 Runner.run(Runner.create(), engine);
 
-document.getElementById('restart-btn').addEventListener('click', () => location.reload());
-document.getElementById('submitMsgBtn').addEventListener('click', () => location.reload());
-console.log("Game initialized. Waiting for difficulty selection.");
-document.addEventListener("DOMContentLoaded", () => {
-    const submitBtn = document.getElementById("submitMsgBtn");
-    const input = document.getElementById("userMessage");
-    const overlay = document.getElementById("inputOverlay");
+// Game Over Input Handling
+document.getElementById('submitMsgBtn').addEventListener('click', () => {
+    const input = document.getElementById('userMessage').value.trim();
+    const feedback = document.getElementById('secretFeedback');
 
-    submitBtn.addEventListener("click", () => {
-        const value = input.value.trim().toUpperCase();
-
-        if (value === "HELLO") {
-            overlay.innerHTML = `
-                <div class="modal">
-                    <h2>🎉 正解！</h2>
-                    <p>あなたの言葉が塔を再建しました！</p>
-                    <button class="btn" onclick="location.reload()">もう一度プレイ</button>
-                </div>
-            `;
-        } else {
-            alert("入力された文字は「HELLO」ではありません。");
-        }
-    });
+    if (input.toUpperCase() === 'HELLO') {
+        feedback.textContent = "正解 (Correct)!";
+        feedback.style.color = "green";
+    } else {
+        feedback.textContent = "...";
+        feedback.style.color = "gray";
+    }
 });
+
+document.getElementById('modalRestartBtn').addEventListener('click', () => {
+    location.reload();
+});
+
+console.log("Game initialized. Waiting for difficulty selection.");
