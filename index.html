@@ -35,8 +35,13 @@
         <div id="inputOverlay" class="overlay hidden">
             <div class="modal">
                 <h2>Tower Collapsed!</h2>
+                <p>Type "HELLO" for a surprise.</p>
                 <input type="text" id="userMessage" placeholder="Leave a message..." maxlength="20">
-                <button id="submitMsgBtn" class="btn">Try Again</button>
+                <p id="secretFeedback" style="min-height: 1.5em; font-weight: bold;"></p>
+                <div style="display: flex; gap: 10px; justify-content: center; margin-top: 10px;">
+                    <button id="submitMsgBtn" class="btn" style="background-color: #2196F3;">Submit</button>
+                    <button id="modalRestartBtn" class="btn" style="background-color: #4CAF50;">Restart</button>
+                </div>
             </div>
         </div>
     </div>
